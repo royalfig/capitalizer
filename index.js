@@ -83,20 +83,55 @@ function isCapped(word, position, config, length) {
     const lowercase = word.toLowerCase();
     const uppercase = word.toUpperCase();
     if (isFirstWord(position))
-        return { word: firstLetterCapped, rule: getRule_1.getRule(0, firstLetterCapped) };
+        return {
+            original: word,
+            word: firstLetterCapped,
+            rule: getRule_1.getRule(0, firstLetterCapped),
+            dx: compareWords(word, firstLetterCapped),
+        };
     if (isLastWord(position, length))
-        return { word: firstLetterCapped, rule: getRule_1.getRule(1, firstLetterCapped) };
+        return {
+            original: word,
+            word: firstLetterCapped,
+            rule: getRule_1.getRule(1, firstLetterCapped),
+            dx: compareWords(word, firstLetterCapped),
+        };
     if (configIncludesWord(config.allCaps, uppercase)) {
-        return { word: uppercase, rule: getRule_1.getRule(2, uppercase) };
+        return {
+            original: word,
+            word: uppercase,
+            rule: getRule_1.getRule(2, uppercase),
+            dx: compareWords(word, uppercase),
+        };
     }
     if (configIncludesWord(config.alwaysUpper, lowercase)) {
-        return { word: firstLetterCapped, rule: getRule_1.getRule(3, firstLetterCapped) };
+        return {
+            original: word,
+            word: firstLetterCapped,
+            rule: getRule_1.getRule(3, firstLetterCapped),
+            dx: compareWords(word, firstLetterCapped),
+        };
     }
     if (!followsLengthRule(config, lowercase))
-        return { word: firstLetterCapped, rule: getRule_1.getRule(4, firstLetterCapped) };
+        return {
+            original: word,
+            word: firstLetterCapped,
+            rule: getRule_1.getRule(4, firstLetterCapped),
+            dx: compareWords(word, firstLetterCapped),
+        };
     if (configIncludesWord(config.alwaysLower, lowercase))
-        return { word: lowercase, rule: getRule_1.getRule(5, lowercase) };
-    return { word: firstLetterCapped, rule: getRule_1.getRule(6, firstLetterCapped) };
+        return {
+            original: word,
+            word: lowercase,
+            rule: getRule_1.getRule(5, lowercase),
+            dx: compareWords(word, lowercase),
+        };
+    return {
+        original: word,
+        word: firstLetterCapped,
+        rule: getRule_1.getRule(6, firstLetterCapped),
+        dx: compareWords(word, firstLetterCapped),
+    };
 }
 function followsLengthRule(config, word) {
     return config.alwaysLowerLength === null
@@ -116,6 +151,16 @@ function capitalize(word, position, config, length) {
     const capitalizedWord = isCapped(word, position, config, length);
     console.log(capitalizedWord);
     return capitalizedWord.word;
+}
+function compareWords(original, capitalizedWord) {
+    if (original === capitalizedWord)
+        return capitalizedWord;
+    const dxArray = Array.from(original).map((letter, idx) => {
+        return letter === capitalizedWord[idx]
+            ? capitalizedWord[idx]
+            : `<span class="has-changed">${capitalizedWord[idx]}</span>`;
+    });
+    return dxArray.join("");
 }
 class Title {
     constructor(config, raw) {
@@ -138,16 +183,15 @@ class Title {
     parseAndCapitalize(originalTitlesWords) {
         const capitalizedTitlesArray = [];
         const capitalizedTitlesWords = originalTitlesWords.map((arr) => {
-            console.log("run");
-            const x = arr.map((word, i, arr) => {
+            const capitalizedWordsArray = arr.map((word, i, arr) => {
                 const titleLength = arr.length;
                 const positionInTitle = i;
                 return capitalize(word, positionInTitle, this.config, titleLength);
             });
-            const y = x.join(" ");
-            capitalizedTitlesArray.push(y);
-            console.log(x);
-            return x;
+            const capitalizedTitle = capitalizedWordsArray.join(" ");
+            capitalizedTitlesArray.push(capitalizedTitle);
+            console.log(capitalizedWordsArray);
+            return capitalizedWordsArray;
         });
         return { capitalizedTitlesWords, capitalizedTitlesArray };
     }
@@ -179,3 +223,5 @@ function initCapitalizationSequence(title, config) {
 const testCase_1 = require("./testCase");
 const testTitles = testCase_1.titles.join("\n");
 initCapitalizationSequence(testTitles, "CMS");
+// TODO HYPHENS
+// TODO
