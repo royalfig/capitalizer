@@ -1,5 +1,6 @@
 import { AP, APA, CMS, MLA, NYT, WP, Rule } from "./lib/rules";
 import verbalPhrases from "./lib/verbalPhrases";
+import { getRule } from "./utils/getRule";
 
 // Configuration | Takes the desired style and sets that styles rules
 const configs = new Map();
@@ -83,7 +84,7 @@ function isCapped(
   position: number,
   config: Rule,
   length: number
-): boolean {
+): { word: string; rule: string } {
   /* 
 This checks the following
 1. Is word included in words to always be lowercase?
@@ -92,17 +93,42 @@ This checks the following
 4. Is this word at the beginning of the title?
 5. Is this word at the end of the title?
  */
-  if (
-    configIncludesWord(config.alwaysLower, word) &&
-    followsLengthRule(config, word) &&
-    !configIncludesWord(config.allCaps, word) &&
-    !configIncludesWord(config.alwaysUpper, word) &&
-    !isFirstWord(position) &&
-    !isLastWord(position, length)
-  ) {
-    return false;
+  // if (
+  //   configIncludesWord(config.alwaysLower, word) &&
+  //   followsLengthRule(config, word) &&
+  //   !configIncludesWord(config.allCaps, word) &&
+  //   !configIncludesWord(config.alwaysUpper, word) &&
+  //   !isFirstWord(position) &&
+  //   !isLastWord(position, length)
+  // ) {
+  //   return false;
+  // }
+  // return true;
+  const firstLetterCapped = capFirstLetter(word);
+  const lowercase = word.toLowerCase();
+  const uppercase = word.toUpperCase();
+
+  if (isFirstWord(position))
+    return { word: firstLetterCapped, rule: getRule(0, firstLetterCapped) };
+
+  if (isLastWord(position, length))
+    return { word: firstLetterCapped, rule: getRule(1, firstLetterCapped) };
+
+  if (configIncludesWord(config.allCaps, uppercase)) {
+    return { word: uppercase, rule: getRule(2, uppercase) };
   }
-  return true;
+
+  if (configIncludesWord(config.alwaysUpper, lowercase)) {
+    return { word: firstLetterCapped, rule: getRule(3, firstLetterCapped) };
+  }
+
+  if (!followsLengthRule(config, lowercase))
+    return { word: firstLetterCapped, rule: getRule(4, firstLetterCapped) };
+
+  if (configIncludesWord(config.alwaysLower, lowercase))
+    return { word: lowercase, rule: getRule(5, lowercase) };
+
+  return { word: firstLetterCapped, rule: getRule(6, firstLetterCapped) };
 }
 
 function followsLengthRule(config: Rule, word: string) {
@@ -121,6 +147,7 @@ function configIncludesWord(
 function isFirstWord(position: number) {
   return position === 0 ? true : false;
 }
+
 function isLastWord(position: number, length: number) {
   return position + 1 === length ? true : false;
 }
@@ -131,17 +158,9 @@ function capitalize(
   config: Rule,
   length: number
 ) {
-  const wordInAllLowercase = word.toLowerCase();
-  const wordInAllCaps = word.toUpperCase();
-
-  // Check if word is included in abbreviation list (e.g., CIA)
-  if (configIncludesWord(config.alwaysUpper, wordInAllCaps)) {
-    return wordInAllCaps;
-  }
-
-  return !isCapped(wordInAllLowercase, position, config, length)
-    ? wordInAllLowercase
-    : capFirstLetter(wordInAllLowercase);
+  const capitalizedWord = isCapped(word, position, config, length);
+  console.log(capitalizedWord);
+  return capitalizedWord.word;
 }
 
 interface Title {

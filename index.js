@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const rules_1 = require("./lib/rules");
 const verbalPhrases_1 = __importDefault(require("./lib/verbalPhrases"));
+const getRule_1 = require("./utils/getRule");
 // Configuration | Takes the desired style and sets that styles rules
 const configs = new Map();
 (function initConfigs() {
@@ -67,15 +68,35 @@ function isCapped(word, position, config, length) {
   4. Is this word at the beginning of the title?
   5. Is this word at the end of the title?
    */
-    if (configIncludesWord(config.alwaysLower, word) &&
-        followsLengthRule(config, word) &&
-        !configIncludesWord(config.allCaps, word) &&
-        !configIncludesWord(config.alwaysUpper, word) &&
-        !isFirstWord(position) &&
-        !isLastWord(position, length)) {
-        return false;
+    // if (
+    //   configIncludesWord(config.alwaysLower, word) &&
+    //   followsLengthRule(config, word) &&
+    //   !configIncludesWord(config.allCaps, word) &&
+    //   !configIncludesWord(config.alwaysUpper, word) &&
+    //   !isFirstWord(position) &&
+    //   !isLastWord(position, length)
+    // ) {
+    //   return false;
+    // }
+    // return true;
+    const firstLetterCapped = capFirstLetter(word);
+    const lowercase = word.toLowerCase();
+    const uppercase = word.toUpperCase();
+    if (isFirstWord(position))
+        return { word: firstLetterCapped, rule: getRule_1.getRule(0, firstLetterCapped) };
+    if (isLastWord(position, length))
+        return { word: firstLetterCapped, rule: getRule_1.getRule(1, firstLetterCapped) };
+    if (configIncludesWord(config.allCaps, uppercase)) {
+        return { word: uppercase, rule: getRule_1.getRule(2, uppercase) };
     }
-    return true;
+    if (configIncludesWord(config.alwaysUpper, lowercase)) {
+        return { word: firstLetterCapped, rule: getRule_1.getRule(3, firstLetterCapped) };
+    }
+    if (!followsLengthRule(config, lowercase))
+        return { word: firstLetterCapped, rule: getRule_1.getRule(4, firstLetterCapped) };
+    if (configIncludesWord(config.alwaysLower, lowercase))
+        return { word: lowercase, rule: getRule_1.getRule(5, lowercase) };
+    return { word: firstLetterCapped, rule: getRule_1.getRule(6, firstLetterCapped) };
 }
 function followsLengthRule(config, word) {
     return config.alwaysLowerLength === null
@@ -92,15 +113,9 @@ function isLastWord(position, length) {
     return position + 1 === length ? true : false;
 }
 function capitalize(word, position, config, length) {
-    const wordInAllLowercase = word.toLowerCase();
-    const wordInAllCaps = word.toUpperCase();
-    // Check if word is included in abbreviation list (e.g., CIA)
-    if (configIncludesWord(config.alwaysUpper, wordInAllCaps)) {
-        return wordInAllCaps;
-    }
-    return !isCapped(wordInAllLowercase, position, config, length)
-        ? wordInAllLowercase
-        : capFirstLetter(wordInAllLowercase);
+    const capitalizedWord = isCapped(word, position, config, length);
+    console.log(capitalizedWord);
+    return capitalizedWord.word;
 }
 class Title {
     constructor(config, raw) {
