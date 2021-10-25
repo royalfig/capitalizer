@@ -7,5 +7,8 @@
     "build": "tsc"
   },
   "author": "Ryan Feigenbaum",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
 }
