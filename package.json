@@ -4,7 +4,7 @@
   "description": "Package for capitalizing titles according to style rules",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "author": "Ryan Feigenbaum",
   "license": "ISC"
