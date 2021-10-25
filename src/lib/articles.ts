@@ -1,3 +1,3 @@
-const articles = ["a", "an", "the"];
+const articles = ['a', 'an', 'the'];
 
 export default articles;

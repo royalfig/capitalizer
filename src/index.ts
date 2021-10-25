@@ -1,6 +1,6 @@
-import { AP, APA, CMS, MLA, NYT, WP, Rule } from "./lib/rules";
-import verbalPhrases from "./lib/verbalPhrases";
-import { getRule } from "./utils/getRule";
+import { AP, APA, CMS, MLA, NYT, WP, Rule } from './lib/rules';
+import verbalPhrases from './lib/verbalPhrases';
+import { getRule } from './utils/getRule';
 
 // Configuration | Takes the desired style and sets that styles rules
 const configs = new Map();
@@ -17,14 +17,14 @@ function getConfig(style: string) {
 
 function prepareTitle(input: string) {
   return input
-    .replace(/'\b/g, "\u2018")
-    .replace(/\b'/g, "\u2019")
-    .replace(/"\b/g, "\u201c")
-    .replace(/\b"/g, "\u201d")
-    .replace(/,"/g, ",\u201d")
-    .replace(/--/g, "\u2014")
-    .replace(/\b\u2018\b/g, "\u2019")
-    .replace(/(\u2018)(\d\ds)/g, "\u2019$2");
+    .replace(/'\b/g, '\u2018')
+    .replace(/\b'/g, '\u2019')
+    .replace(/"\b/g, '\u201c')
+    .replace(/\b"/g, '\u201d')
+    .replace(/,"/g, ',\u201d')
+    .replace(/--/g, '\u2014')
+    .replace(/\b\u2018\b/g, '\u2019')
+    .replace(/(\u2018)(\d\ds)/g, '\u2019$2');
 }
 
 function capFirstLetter(word: string) {
@@ -32,7 +32,7 @@ function capFirstLetter(word: string) {
 }
 
 function removePunctuation(word: string) {
-  return word.replace(/[.,:;'"?!{}#&%$*^\u2018\u2019\u201c\u201d]|\[|\]/g, "");
+  return word.replace(/[.,:;'"?!{}#&%$*^\u2018\u2019\u201c\u201d]|\[|\]/g, '');
 }
 
 interface postCapitalizationSequence {
@@ -47,21 +47,17 @@ class postCapitalizationSequence {
   }
 
   formatVerbalPhrases(title: string) {
-    this.title = title.replace(verbalPhrases, (match) =>
-      match.replace(/\b\w/g, (match) => match.toUpperCase())
-    );
+    this.title = title.replace(verbalPhrases, (match) => match.replace(/\b\w/g, (match) => match.toUpperCase()));
     return this;
   }
 
   basicHyphenFormatting(title: string) {
-    this.title = title.replace(/-(\w)|:\s(\w)|\?\s(\w)/g, (match) =>
-      capFirstLetter(match)
-    );
+    this.title = title.replace(/-(\w)|:\s(\w)|\?\s(\w)/g, (match) => capFirstLetter(match));
     return this;
   }
 
   formatUS(title: string) {
-    this.title = title.replace(/(t|T)he U(\.)?s(\.)?(\W|\b)/g, "$1he U$2S$3$4");
+    this.title = title.replace(/(t|T)he U(\.)?s(\.)?(\W|\b)/g, '$1he U$2S$3$4');
     return this;
   }
 
@@ -71,10 +67,7 @@ class postCapitalizationSequence {
   }
 
   formatAfterEmDash(title: string, config: Rule) {
-    this.title = title.replace(
-      /\u2014(\w+)/g,
-      (match, capture) => "\u2014" + capitalize(capture, 1, this.config, 3)
-    );
+    this.title = title.replace(/\u2014(\w+)/g, (match, capture) => '\u2014' + capitalize(capture, 1, this.config, 3));
     return this;
   }
 }
@@ -83,7 +76,7 @@ function isCapped(
   word: string,
   position: number,
   config: Rule,
-  length: number
+  length: number,
 ): { original: string; word: string; rule: string; dx: string } {
   /* 
 This checks the following
@@ -168,15 +161,10 @@ This checks the following
 }
 
 function followsLengthRule(config: Rule, word: string) {
-  return config.alwaysLowerLength === null
-    ? true
-    : word.length < config.alwaysLowerLength;
+  return config.alwaysLowerLength === null ? true : word.length < config.alwaysLowerLength;
 }
 
-function configIncludesWord(
-  config: Rule["alwaysLower"] | Rule["alwaysUpper"] | Rule["allCaps"],
-  word: string
-) {
+function configIncludesWord(config: Rule['alwaysLower'] | Rule['alwaysUpper'] | Rule['allCaps'], word: string) {
   return config.includes(word);
 }
 
@@ -188,12 +176,7 @@ function isLastWord(position: number, length: number) {
   return position + 1 === length ? true : false;
 }
 
-function capitalize(
-  word: string,
-  position: number,
-  config: Rule,
-  length: number
-) {
+function capitalize(word: string, position: number, config: Rule, length: number) {
   const capitalizedWord = isCapped(word, position, config, length);
   console.log(capitalizedWord);
   return capitalizedWord.word;
@@ -207,7 +190,7 @@ function compareWords(original: string, capitalizedWord: string) {
       ? capitalizedWord[idx]
       : `<span class="has-changed">${capitalizedWord[idx]}</span>`;
   });
-  return dxArray.join("");
+  return dxArray.join('');
 }
 
 interface Title {
@@ -229,12 +212,12 @@ class Title {
   constructor(config: string, raw: string) {
     this.config = getConfig(config);
     this.originalTitles = raw;
-    this.originalTitlesArray = this.splitLines(raw, "\n");
+    this.originalTitlesArray = this.splitLines(raw, '\n');
     this.originalTitlesWords = this.splitWords(this.originalTitlesArray, /\s/g);
     this.capitalizedObj = this.parseAndCapitalize(this.originalTitlesWords);
     this.capitalizedTitlesWords = this.capitalizedObj.capitalizedTitlesWords;
     this.capitalizedTitlesArray = this.capitalizedObj.capitalizedTitlesArray;
-    this.capitalizedTitles = this.capitalizedTitlesArray.join("\n");
+    this.capitalizedTitles = this.capitalizedTitlesArray.join('\n');
     this.numberOfTitles = this.originalTitlesArray.length;
   }
 
@@ -255,7 +238,7 @@ class Title {
         return capitalize(word, positionInTitle, this.config, titleLength);
       });
 
-      const capitalizedTitle = capitalizedWordsArray.join(" ");
+      const capitalizedTitle = capitalizedWordsArray.join(' ');
       capitalizedTitlesArray.push(capitalizedTitle);
       console.log(capitalizedWordsArray);
       return capitalizedWordsArray;
@@ -290,11 +273,11 @@ function initCapitalizationSequence(title: string, config: string) {
   // console.log(capitalizedTitles);
 }
 
-import { titles } from "./testCase";
+import { titles } from './testCase';
 
-const testTitles = titles.join("\n");
+const testTitles = titles.join('\n');
 
-initCapitalizationSequence(testTitles, "CMS");
+initCapitalizationSequence(testTitles, 'CMS');
 
 // TODO HYPHENS
 // TODO

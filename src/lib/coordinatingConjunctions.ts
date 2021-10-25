@@ -1,11 +1,3 @@
-const coordinatingConjunctions = [
-  "and",
-  "but",
-  "for",
-  "nor",
-  "or",
-  "so",
-  "yet",
-];
+const coordinatingConjunctions = ['and', 'but', 'for', 'nor', 'or', 'so', 'yet'];
 
 export default coordinatingConjunctions;

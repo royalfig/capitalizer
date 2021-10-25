@@ -1,5 +1,5 @@
-import { getRule } from "./getRule";
-import { Rule } from "../lib/rules";
+import { getRule } from './getRule';
+import { Rule } from '../lib/rules';
 
 function isFirstWord(position: number) {
   return position === 0 ? true : false;
@@ -10,7 +10,7 @@ function isLastWord(position: number, length: number) {
 }
 
 function removePunctuation(word: string) {
-  return word.replace(/[.,:;'"?!{}#&%$*^\u2018\u2019\u201c\u201d]|\[|\]/g, "");
+  return word.replace(/[.,:;'"?!{}#&%$*^\u2018\u2019\u201c\u201d]|\[|\]/g, '');
 }
 
 function compareWords(original: string, capitalizedWord: string) {
@@ -21,19 +21,14 @@ function compareWords(original: string, capitalizedWord: string) {
       ? capitalizedWord[idx]
       : `<span class="has-changed">${capitalizedWord[idx]}</span>`;
   });
-  return dxArray.join("");
+  return dxArray.join('');
 }
 
 function followsLengthRule(config: Rule, word: string) {
-  return config.alwaysLowerLength === null
-    ? true
-    : word.length < config.alwaysLowerLength;
+  return config.alwaysLowerLength === null ? true : word.length < config.alwaysLowerLength;
 }
 
-function configIncludesWord(
-  config: Rule["alwaysLower"] | Rule["alwaysUpper"] | Rule["allCaps"],
-  word: string
-) {
+function configIncludesWord(config: Rule['alwaysLower'] | Rule['alwaysUpper'] | Rule['allCaps'], word: string) {
   return config.includes(word);
 }
 
@@ -45,7 +40,7 @@ export function isCapped(
   word: string,
   position: number,
   config: Rule,
-  length: number
+  length: number,
 ): { original: string; word: string; rule: string; dx: string } {
   /* 
   This checks the following

@@ -1,13 +1,13 @@
-import allCaps from "./allCaps";
-import articles from "./articles";
-import coordinatingConjunctions from "./coordinatingConjunctions";
-import lowerCasePartofNames from "./lowerCasePartOfNames";
-import prepositions from "./prepositions";
-import species from "./species";
-import subordinatingConjunctions from "./subordinatingConjunctions";
+import allCaps from './allCaps';
+import articles from './articles';
+import coordinatingConjunctions from './coordinatingConjunctions';
+import lowerCasePartofNames from './lowerCasePartOfNames';
+import prepositions from './prepositions';
+import species from './species';
+import subordinatingConjunctions from './subordinatingConjunctions';
 
-import cmsSpecialWords from "./cmsSpecialWords";
-import { nytAlwaysLowerCase, nytAlwaysUpperCase } from "./nytSpecialWords";
+import cmsSpecialWords from './cmsSpecialWords';
+import { nytAlwaysLowerCase, nytAlwaysUpperCase } from './nytSpecialWords';
 
 export interface Rule {
   allCaps: string[];
@@ -32,8 +32,8 @@ const AP: Rule = {
   alwaysLowerLength: 4,
   alwaysUpper: [],
   hyphen: null,
-  name: "Associated Press",
-  abbreviation: "AP",
+  name: 'Associated Press',
+  abbreviation: 'AP',
 };
 
 const APA: Rule = {
@@ -49,70 +49,48 @@ const APA: Rule = {
   alwaysLowerLength: 4,
   alwaysUpper: [],
   hyphen: null,
-  name: "American Psychological Association",
-  abbreviation: "APA",
+  name: 'American Psychological Association',
+  abbreviation: 'APA',
 };
 
 const CMS: Rule = {
   allCaps,
-  alwaysLower: [
-    ...cmsSpecialWords,
-    ...articles,
-    ...prepositions,
-    ...lowerCasePartofNames,
-    ...species,
-  ],
+  alwaysLower: [...cmsSpecialWords, ...articles, ...prepositions, ...lowerCasePartofNames, ...species],
   alwaysLowerLength: null,
   alwaysUpper: [],
   hyphen: null,
-  name: "Chicago Manual of Style",
-  abbreviation: "CMS",
+  name: 'Chicago Manual of Style',
+  abbreviation: 'CMS',
 };
 
 const MLA: Rule = {
   allCaps,
-  alwaysLower: [
-    ...articles,
-    ...prepositions,
-    ...coordinatingConjunctions,
-    ...lowerCasePartofNames,
-    ...species,
-  ],
+  alwaysLower: [...articles, ...prepositions, ...coordinatingConjunctions, ...lowerCasePartofNames, ...species],
   alwaysLowerLength: null,
   alwaysUpper: [],
   hyphen: null,
-  name: "Modern Language Association",
-  abbreviation: "MLA",
+  name: 'Modern Language Association',
+  abbreviation: 'MLA',
 };
 
 const NYT: Rule = {
   allCaps,
-  alwaysLower: [
-    ...nytAlwaysLowerCase,
-    ...articles,
-    ...lowerCasePartofNames,
-    ...species,
-  ],
+  alwaysLower: [...nytAlwaysLowerCase, ...articles, ...lowerCasePartofNames, ...species],
   alwaysLowerLength: null,
   alwaysUpper: nytAlwaysUpperCase,
   hyphen: null,
-  name: "New York Times",
-  abbreviation: "NYT",
+  name: 'New York Times',
+  abbreviation: 'NYT',
 };
 
 const WP: Rule = {
   allCaps,
-  alwaysLower: [
-    ...articles,
-    ...coordinatingConjunctions,
-    ...prepositions,
-    ...species,
-  ],
+  alwaysLower: [...articles, ...coordinatingConjunctions, ...prepositions, ...species],
   alwaysLowerLength: 5,
   alwaysUpper: [],
   hyphen: null,
-  name: "Wikipedia",
-  abbreviation: "WP",
+  name: 'Wikipedia',
+  abbreviation: 'WP',
 };
 
 export { AP, APA, CMS, MLA, NYT, WP };
