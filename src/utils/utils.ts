@@ -1,6 +1,18 @@
 import { getRule } from './getRule';
 import { Rule } from '../lib/rules';
 
+export function prepareTitle(input: string) {
+  return input
+    .replace(/'\b/g, '\u2018')
+    .replace(/\b'/g, '\u2019')
+    .replace(/"\b/g, '\u201c')
+    .replace(/\b"/g, '\u201d')
+    .replace(/,"/g, ',\u201d')
+    .replace(/--/g, '\u2014')
+    .replace(/\b\u2018\b/g, '\u2019')
+    .replace(/(\u2018)(\d\ds)/g, '\u2019$2');
+}
+
 function isFirstWord(position: number) {
   return position === 0 ? true : false;
 }
@@ -33,7 +45,7 @@ function configIncludesWord(config: Rule['alwaysLower'] | Rule['alwaysUpper'] | 
 }
 
 export function capFirstLetter(word: string) {
-  return word.replace(/\w/, (match) => match.toUpperCase());
+  return word.substring(0, 1).toLocaleUpperCase() + word.substring(1).toLocaleLowerCase();
 }
 
 export function isCapped(
@@ -41,7 +53,7 @@ export function isCapped(
   position: number,
   config: Rule,
   length: number,
-): { original: string; word: string; rule: string; dx: string } {
+): { original: string; word: string; ruleCode: string; rule: string; dx: string } {
   /* 
   This checks the following
   1. Is word included in words to always be lowercase?
@@ -59,6 +71,7 @@ export function isCapped(
     return {
       original: word,
       word: firstLetterCapped,
+      ruleCode: 'First',
       rule: getRule(0, firstLetterCapped),
       dx: compareWords(word, firstLetterCapped),
     };
@@ -67,6 +80,7 @@ export function isCapped(
     return {
       original: word,
       word: firstLetterCapped,
+      ruleCode: 'Last',
       rule: getRule(1, firstLetterCapped),
       dx: compareWords(word, firstLetterCapped),
     };
@@ -75,6 +89,7 @@ export function isCapped(
     return {
       original: word,
       word: uppercase,
+      ruleCode: 'Acroynm',
       rule: getRule(2, uppercase),
       dx: compareWords(word, uppercase),
     };
@@ -84,6 +99,7 @@ export function isCapped(
     return {
       original: word,
       word: firstLetterCapped,
+      ruleCode: 'Special',
       rule: getRule(3, firstLetterCapped),
       dx: compareWords(word, firstLetterCapped),
     };
@@ -93,6 +109,7 @@ export function isCapped(
     return {
       original: word,
       word: firstLetterCapped,
+      ruleCode: 'Long',
       rule: getRule(4, firstLetterCapped),
       dx: compareWords(word, firstLetterCapped),
     };
@@ -101,6 +118,7 @@ export function isCapped(
     return {
       original: word,
       word: lowercase,
+      ruleCode: 'A/P/C',
       rule: getRule(5, lowercase),
       dx: compareWords(word, lowercase),
     };
@@ -108,6 +126,7 @@ export function isCapped(
   return {
     original: word,
     word: firstLetterCapped,
+    ruleCode: 'N/P/V',
     rule: getRule(6, firstLetterCapped),
     dx: compareWords(word, firstLetterCapped),
   };

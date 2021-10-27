@@ -9,7 +9,6 @@ const allCaps: string[] = [
   'ADA',
   'AI',
   'AKA',
-  'AM',
   'ASAP',
   'ASCII',
   'ATM',
