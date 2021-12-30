@@ -11,7 +11,13 @@ const configs = new Map();
 })();
 
 function getConfig(style: string) {
-  return configs.get(style);
+  const styleAbbreviation = style.toUpperCase();
+
+  if (!['AP', 'APA', 'CMS', 'MLA', 'NYT', 'WP'].includes(styleAbbreviation)) {
+    throw Error('Style not defined or recognized');
+  } else {
+    return configs.get(styleAbbreviation);
+  }
 }
 
 export interface Title {
@@ -51,3 +57,5 @@ export class Title {
 
 // Internal Test
 import { titles } from './testCase';
+
+console.log(new Title('cms', titles));
